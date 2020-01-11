@@ -1,7 +1,8 @@
 from collections import OrderedDict
 import json
-import nltk
+# import nltk
 import pandas as pd
+import sys
 
 '''
 This is for evaluating all the characters within in a string
@@ -13,7 +14,16 @@ how many and which numeric characters
 how many and which special characters
 
 '''
-def char_report(string):
+def char_report(input_string):
+
+	string = ''
+
+	for char in input_string:
+		if char.isalpha():
+			string = string + char.lower()
+		else:
+			string = string + char
+
 
 	# ordering characters by alphabetical first, numeric, then special?
 	char_dict = dict()
@@ -22,53 +32,38 @@ def char_report(string):
 	num_dict = dict()
 	special_dict = dict()
 
-	alpha_keys = list()
-	num_keys = list()
-	special_keys = list()
+	for i in string:
+		if i.isalpha():
+			if i in alpha_dict.keys():
+				alpha_dict[i] += 1
+			else:
+				alpha_dict[i] = 1
 
-	# for letter in string
-	if i.isalpha():
-		if i in alpha_dict.keys():
-			alpha_dict[i.lower()] += 1
+		elif i.isnumeric():
+			if i in num_dict.keys():
+				num_dict[i] += 1
+			else:
+				num_dict[i] = 1
+
 		else:
-			alpha_dict[i.lower()] = 1
-			alpha_keys.append(i.lower())
+			if i in special_dict.keys():
+				special_dict[i] += 1
+			else:
+				special_dict[i] = 1
 
 
-	elif i.isnumeric():
-		if i in num_dict.keys():
-			num_dict[i] += 1
-		else:
-			num_dict[i] = 1
-			num_keys.append(i)
+		char_dict["Alphabetical Chars"] = alpha_dict	
+		char_dict["Numeric Chars"] = num_dict
+		char_dict["Special Chars"] = special_dict	
 
-	else:
-		if i in special_dict.keys():
-			special_dict[i] += 1
-		else:
-			special_dict[i] = 1
-			special_keys.append(i)
+	json_output = json.dumps(char_dict, indent=4, sort_keys=True)
+
+	return json_output
 
 
-	sortedAlpha = sorted(alpha_keys)
-	sortedNum = sorted(num_keys)
-	sortedSpecial = sorted(special_keys)
+string = input("Input string: ")
 
-
-	alpha_Ordered = OrderedDict((key, alpha_dict[key]) for key in sortedAlpha)		
-
-	num_Ordered = OrderedDict((key, num_dict[key]) for key in sortedNum)
-
-	special_Ordered = OrderedDict((key, special_dict[key]) for key in sortedSpecial)
-
-
-	char_dict["Alphabetical Chars"] = alpha_Ordered	
-	char_dict["Numeric Chars"] = num_Ordered	
-	char_dict["Special Chars"] = special_Ordered	
-
-	return char_dict
-
-
+print(char_report(string))
 
 
 
